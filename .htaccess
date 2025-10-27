@@ -1,0 +1,12 @@
+# Force le serveur à utiliser introuvable.php pour toutes les erreurs 404
+ErrorDocument 404 http://localhost/actif_postgre_bilingue/introuvable
+
+# Les règles de réécriture pour cacher les extensions .php
+RewriteEngine On
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^/]*)\.php\ HTTP/
+RewriteRule ^([^/]*)\.php$ /$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
