@@ -1,9 +1,6 @@
 # Dockerfile pour application PHP + Apache avec installation des extensions
 FROM php:8.2-apache-bookworm
 
-# Configurer DNS pour résoudre les noms de domaine externes
-RUN echo "nameserver 8.8.8.8" >> /etc/resolv.conf && \
-    echo "nameserver 8.8.4.4" >> /etc/resolv.conf
 
 # Installer les dépendances système nécessaires à la compilation des extensions PHP
 RUN apt-get update && apt-get install -y \
