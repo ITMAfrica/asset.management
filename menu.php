@@ -2,22 +2,30 @@
 // Démarrer la session
 session_start();
 
-// --- GESTION DE LA LANGUE ---
-// Définir la langue par défaut si elle n'est pas déjà définie
-if (!isset($_SESSION['lang'])) {
-    $_SESSION['lang'] = 'fr'; // Français par défaut
-}
+// -------------old logique de gestion de langue---------------
+// // --- GESTION DE LA LANGUE ---
+// // Définir la langue par défaut si elle n'est pas déjà définie
+// if (!isset($_SESSION['lang'])) {
+//     $_SESSION['lang'] = 'fr'; // Français par défaut
+// }
 
-// Changer la langue si un formulaire a été soumis
-if (isset($_POST['lang_switch'])) {
-    $new_lang = $_POST['lang_switch'] === 'en' ? 'en' : 'fr';
-    $_SESSION['lang'] = $new_lang;
+// // Changer la langue si un formulaire a été soumis
+// if (isset($_POST['lang_switch'])) {
+//     $new_lang = $_POST['lang_switch'] === 'en' ? 'en' : 'fr';
+//     $_SESSION['lang'] = $new_lang;
     
-    // ***************************************************************
-    // CORRECTION MAJEURE: Suppression de la redirection PHP (cause du 404).
-    // La mise à jour de la session est la seule action ici.
-    // ***************************************************************
-    exit(); 
+//     // ***************************************************************
+//     // CORRECTION MAJEURE: Suppression de la redirection PHP (cause du 404).
+//     // La mise à jour de la session est la seule action ici.
+//     // ***************************************************************
+//     exit(); 
+// }
+
+// ---------------new logique gestion langue-----------
+if (isset($_GET['lang'])) {
+    $new_lang = $_GET['lang'] === 'en' ? 'en' : 'fr';
+    $_SESSION['lang'] = $new_lang;
+    // Pas de redirection - la page se recharge via JavaScript
 }
 
 $current_lang = $_SESSION['lang'];
@@ -174,11 +182,16 @@ $autorisations = [
             <h3><?php echo $T['welcome'] . htmlspecialchars($_SESSION['user_nom']); ?></h3>
             <p><?php echo htmlspecialchars($_SESSION['user_profil']); ?></p>
             
-            <form method="POST" class="lang-switcher" id="lang-form">
+            <!-- <form method="POST" class="lang-switcher" id="lang-form">
                 <button type="submit" name="lang_switch" value="fr" class="<?php echo ($current_lang === 'fr' ? 'active' : ''); ?>">FR</button>
                 |
                 <button type="submit" name="lang_switch" value="en" class="<?php echo ($current_lang === 'en' ? 'active' : ''); ?>">EN</button>
-            </form>
+            </form> -->
+            <div class="lang-switcher">
+                <a href="?lang=fr" class="<?php echo ($current_lang === 'fr' ? 'active' : ''); ?>">FR</a>
+                |
+                <a href="?lang=en" class="<?php echo ($current_lang === 'en' ? 'active' : ''); ?>">EN</a>
+            </div>
         </div>
         <ul>
             <?php if (estAutorise($autorisations['dashboard'])): ?>
@@ -338,7 +351,17 @@ $autorisations = [
             // Démarrez le minuteur principal au chargement de la page
             startInactivityTimer();
 
+            // new logique langue 
+            // Remplacer par un simple rechargement de la page avec paramètre de langue
+            function changeLanguage(lang) {
+                const url = new URL(window.location);
+                url.searchParams.set('lang', lang);
+                window.location.href = url.toString();
+            }
 
+
+
+/*
             // --- 1. Gérer la soumission du formulaire de langue (LOGIQUE PRÉCÉDENTE) ---
             if (langForm && mainFrame) {
                 // ... (Votre code pour le changement de langue) ...
@@ -391,7 +414,7 @@ $autorisations = [
                     });
                 });
             }
-            
+            */
             // --- 2. Gérer les clics sur les liens du menu (pour la persistance future - LOGIQUE PRÉCÉDENTE) ---
             const sidebarLinks = document.querySelectorAll('.sidebar ul a');
             sidebarLinks.forEach(link => {
